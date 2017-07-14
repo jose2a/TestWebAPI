@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta charset="utf-8" />
+	<script src="Scripts/jquery-3.1.1.min.js"></script>
+</head>
+<body>
+	<label>Name: </label>
+	<input type="text" id="name" />
+	<button id="search">Search contact</button>
+
+	<script>
+		$(document).ready(function () {
+
+		    var contactsUl = $("#contacts");
+
+		    loadContacts();
+
+		    function loadContacts() {
+		        contactsUl.html("");
+
+		        $.getJSON("http://localhost:9220/api/contact").done(function (contacts) {
+		            $.each(contacts, function (index, value) {
+		                contactsUl.append("<li><a class='ct' href='#' data-id='" + value.Id + "'>" + value.LastName + ", " + value.FirstName + "</a></li>");
+		            });
+
+		            $(".ct").on('click', function (e) {
+		                console.log($(this).data('id'));
+
+		            });
+		        });
+		    }
+			
+
+			$("#search").click(function () {
+				var name = $("#name").val();
+
+				$.getJSON("http://localhost:9220/api/contact/" + name).done(function (contact) {
+					contactsUl.html("");
+					if (contact) {
+						contactsUl.append("<li><a class='ct' href='#' data-id='" + contact.Id + "'>" + contact.LastName + ", " + contact.FirstName + "</a></li>");
+					}
+				});
+
+			});
+
+			$("#name").keydown(function () {
+			    var val = $("#name").val();
+
+			    if (val.trim() === "") {
+			        loadContacts();
+			    }
+			});
+
+		});
+
+	</script>
+
+	<h2>Contacts</h2>
+	<ul id="contacts"></ul>
+
+</body>
+	
+</html>
